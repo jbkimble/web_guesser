@@ -2,7 +2,7 @@ require 'sinatra'
 require 'sinatra/reloader'
 
   def generate_secret_number
-    @secret_number = rand(100)
+    @@secret_number = rand(100)
     @@count = 6
   end
 
@@ -15,9 +15,9 @@ require 'sinatra/reloader'
       "Way too low!"
     elsif (guess.to_i < 0) && (guess.to_i >= -4)
       "Too low!"
-    elsif guess.to_i == @secret_number
+    elsif guess.to_i == @@secret_number
       "You got it right!"
-      "The SECRET NUMBER is #{@secret_number}"
+      "The SECRET NUMBER is #{@@secret_number}"
     end
   end
 
@@ -30,13 +30,13 @@ require 'sinatra/reloader'
       "Red"
     elsif (guess.to_i < 0) && (guess.to_i >= -4)
       "Pink"
-    elsif guess.to_i == @secret_number
+    elsif guess.to_i == @@secret_number
       "Green"
     end
   end
 
   def keeps_count(guess)
-    if @@count < 1
+    if @@count == 1
       generate_secret_number
       return "You have lost, a new secret number has been generated"
     end
@@ -47,16 +47,17 @@ require 'sinatra/reloader'
     end
   end
 
-  def activate_cheat_mode
+  def activate_cheat_mode(cheat)
     if cheat == "true"
-      "The super secret number is #{@secret_number}"
+      return "The super secret number is #{@@secret_number}"
+    end
   end
 
   generate_secret_number
 
   get '/' do
     guess = params["guess"]
-    cheat = params["true"]
+    cheat = params["cheat"]
 
     message = check_guess(guess)
     color_choice = choose_background_color(guess)

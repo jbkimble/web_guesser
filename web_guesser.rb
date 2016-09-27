@@ -40,19 +40,27 @@ require 'sinatra/reloader'
       generate_secret_number
       return "You have lost, a new secret number has been generated"
     end
-    
+
     if (guess.to_i > -1) && (guess.to_i < 101) && (guess != "")
       @@count -= 1
       return "You have #{@@count} guesses left . . ."
     end
   end
 
+  def activate_cheat_mode
+    if cheat == "true"
+      "The super secret number is #{@secret_number}"
+  end
+
   generate_secret_number
 
   get '/' do
     guess = params["guess"]
+    cheat = params["true"]
+
     message = check_guess(guess)
     color_choice = choose_background_color(guess)
     display_count = keeps_count(guess)
-    erb :index, :locals => {:message => message, :color_choice => color_choice, :display_count => display_count}
+    cheat_message = activate_cheat_mode(cheat)
+    erb :index, :locals => {:message => message, :color_choice => color_choice, :display_count => display_count, :cheat_message => cheat_message}
   end
